@@ -12,8 +12,8 @@ import {
     StyledNameCard
 } from '../styles'
 
-import { actionTypes, rowsPerPage } from '../constants'
-import { clone } from '../utils'
+import { actionTypes, data, rowsPerPage, sortBy } from '../constants'
+import { clone, compareByFavourite, compareName } from '../utils'
 
 import StarDefault from '../assets/star-default.png'
 import StarFilled from '../assets/star-filled.png'
@@ -23,13 +23,14 @@ export const Main = ({ searchText }) => {
     const [friendsData, setFriendsData] = React.useState([])
     const [filteredData, setFilteredData] = React.useState([])
     const [enteredName, setEnteredName] = React.useState('')
-    console.log(friendsData)
+    const [sortDataBy, setSoryDataBy] = React.useState(sortBy.none)
+    
     const theme = useTheme()
 
     React.useEffect(() => {
         if (!searchText) {
             setFilteredData([])
-        } else {
+        } else if (searchText.length) {
             const searchFilteredData = friendsData.filter((friend) =>
                 friend.name.toLowerCase().includes(searchText)
             )
@@ -37,6 +38,20 @@ export const Main = ({ searchText }) => {
             setFilteredData(searchFilteredData)
         }
     }, [searchText])
+
+    React.useEffect(() => {
+        if(sortDataBy === sortBy.none){
+            if(filteredData.length) setFilteredData([])
+        }else if(sortDataBy === sortBy.name){
+            const copyData = clone(friendsData)
+
+            setFilteredData(copyData.sort(compareName))
+        } else if(sortDataBy === sortBy.favourite){
+            const copyData = clone(friendsData)
+
+            setFilteredData(copyData.sort(compareByFavourite))
+        }
+    },[sortDataBy])
 
     const getDisplayData = () => {
         if (filteredData.length) {
@@ -145,6 +160,9 @@ export const Main = ({ searchText }) => {
                     value={enteredName}
                 />
                 <Button type="submit">Add</Button>
+                <button type="button" onClick={() => setSoryDataBy(sortBy.name)}>Name</button>
+                <button type="button" onClick={() => setSoryDataBy(sortBy.favourite)}>Favourite</button>
+                <button type="button" onClick={() => setSoryDataBy(sortBy.none)}>Original</button>
             </Flexbox>
             <Line />
 
