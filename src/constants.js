@@ -19,3 +19,5 @@ export const data = [
         isFavourite: true
     }
 ]
+
+export const rowsPerPage = 3
