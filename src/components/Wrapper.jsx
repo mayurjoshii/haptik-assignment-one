@@ -1,14 +1,24 @@
-import { TopBar } from "./TopBar"
+import React from 'react'
+import { TopBar } from './TopBar'
 
-import { Line, StyledWrapper } from "../styles"
-import { Main } from "./Main"
+import { Line, StyledWrapper } from '../styles'
+import { Main } from './Main'
 
 export const Wrapper = () => {
-    return(
+    const [searchText, setSearchText] = React.useState('')
+
+    const handleSearchChange = (e) => {
+        setSearchText(e.target.value)
+    }
+
+    return (
         <StyledWrapper>
-            <TopBar />
+            <TopBar
+                handleSearchChange={handleSearchChange}
+                searchText={searchText}
+            />
             <Line />
-            <Main />
+            <Main searchText={searchText} />
         </StyledWrapper>
     )
 }
