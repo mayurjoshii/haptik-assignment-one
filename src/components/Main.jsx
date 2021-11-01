@@ -46,7 +46,7 @@ export const Main = ({
         if (!searchText) setFilteredData([])
         else if (searchText.length) {
             const searchFilteredData = friendsData.filter((friend) =>
-                friend.name.toLowerCase().includes(searchText)
+                friend.name.toLowerCase().includes(searchText.toLowerCase())
             )
             setFilteredData(searchFilteredData)
         }
