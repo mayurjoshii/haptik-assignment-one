@@ -1,37 +1,21 @@
 import React from 'react'
-import styled from 'styled-components'
 
-import { Flexbox, Input } from '../styles'
+import {
+    Flexbox,
+    SearchInput,
+    SortByMenu,
+    SortByMenuButton,
+    StyledSortByContainer
+} from '../styles'
 
-import SearchIcon from '../assets/search.svg'
 import { sortBy } from '../constants'
-
-export const SearchInput = styled(Input)`
-    background: url(${SearchIcon}) no-repeat scroll 4px 50% / 15px 15px;
-    padding: ${({ theme }) =>
-        `${theme.spacing.xxs} ${theme.spacing.xxs} ${theme.spacing.xxs} ${theme.spacing.xxl}`};
-    box-sizing: border-box;
-`
-
-export const StyledSortByContainer = styled.div`
-    width: 100%;
-    position: relative;
-
-    div {
-        position: absolute;
-    }
-
-    div,
-    button {
-        width: 100%;
-    }
-`
 
 export const TopBar = ({
     handleSearchChange,
     searchText,
     sortDataBy,
-    setSoryDataBy
+    setSoryDataBy,
+    friendsData
 }) => {
     const [isSortByHover, setIsSortByHover] = React.useState(false)
 
@@ -49,18 +33,22 @@ export const TopBar = ({
         }
     }
 
+    console.log(sortDataBy === sortBy.name)
     return (
         <Flexbox
             justifyContent="space-between"
             alignItems="center"
             style={{ padding: '12px 16px' }}
         >
-            <p>Friends List</p>
+            <p>
+                Friends List {!!friendsData.length && `(${friendsData.length})`}
+            </p>
             <Flexbox alignItems="center">
                 <SearchInput
                     value={searchText}
                     onChange={handleSearchChange}
                     type="text"
+                    placeholder="Search for a friend"
                 />
                 <StyledSortByContainer
                     onMouseOver={() => setIsSortByHover(true)}
@@ -68,19 +56,29 @@ export const TopBar = ({
                 >
                     <button>Sort By: {getSoryByLabelByValue()}</button>
                     {isSortByHover && (
-                        <Flexbox flexDirection="column" alignItems="stretch">
-                            <button onClick={() => setSoryDataBy(sortBy.name)}>
-                                Name
-                            </button>
-                            <button
-                                onClick={() => setSoryDataBy(sortBy.favourite)}
+                        <SortByMenu flexDirection="column" alignItems="stretch">
+                            <SortByMenuButton
+                                type="button"
+                                onClick={() => setSoryDataBy(sortBy.name)}
+                                isActive={sortDataBy === sortBy.name}
                             >
-                                Fav
-                            </button>
-                            <button onClick={() => setSoryDataBy(sortBy.none)}>
+                                Name
+                            </SortByMenuButton>
+                            <SortByMenuButton
+                                type="button"
+                                onClick={() => setSoryDataBy(sortBy.favourite)}
+                                isActive={sortDataBy === sortBy.favourite}
+                            >
+                                Favourite
+                            </SortByMenuButton>
+                            <SortByMenuButton
+                                type="button"
+                                onClick={() => setSoryDataBy(sortBy.none)}
+                                isActive={sortDataBy === sortBy.none}
+                            >
                                 Original
-                            </button>
-                        </Flexbox>
+                            </SortByMenuButton>
+                        </SortByMenu>
                     )}
                 </StyledSortByContainer>
             </Flexbox>

@@ -6,6 +6,7 @@ import { Main } from './Main'
 import { sortBy } from '../constants'
 
 export const Wrapper = () => {
+    const [friendsData, setFriendsData] = React.useState([])
     const [searchText, setSearchText] = React.useState('')
     const [sortDataBy, setSoryDataBy] = React.useState(sortBy.none)
 
@@ -20,6 +21,7 @@ export const Wrapper = () => {
                 searchText={searchText}
                 sortDataBy={sortDataBy}
                 setSoryDataBy={setSoryDataBy}
+                friendsData={friendsData}
             />
             <Line />
             <Main
@@ -27,6 +29,8 @@ export const Wrapper = () => {
                 setSearchText={setSearchText}
                 sortDataBy={sortDataBy}
                 setSoryDataBy={setSoryDataBy}
+                friendsData={friendsData}
+                setFriendsData={setFriendsData}
             />
         </StyledWrapper>
     )
