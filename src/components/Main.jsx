@@ -12,49 +12,54 @@ import {
     StyledNameCard
 } from '../styles'
 
-import { actionTypes, data, rowsPerPage, sortBy } from '../constants'
+import { actionTypes, rowsPerPage, sortBy } from '../constants'
 import { clone, compareByFavourite, compareName } from '../utils'
 
 import StarDefault from '../assets/star-default.png'
 import StarFilled from '../assets/star-filled.png'
 import { ReactComponent as TrashIcon } from '../assets/trash-default.svg'
 
-export const Main = ({ searchText }) => {
+export const Main = ({
+    searchText,
+    setSearchText,
+    sortDataBy,
+    setSoryDataBysortDataBy
+}) => {
     const [friendsData, setFriendsData] = React.useState([])
     const [filteredData, setFilteredData] = React.useState([])
     const [enteredName, setEnteredName] = React.useState('')
-    const [sortDataBy, setSoryDataBy] = React.useState(sortBy.none)
-    
     const theme = useTheme()
 
     React.useEffect(() => {
-        if (!searchText) {
-            setFilteredData([])
-        } else if (searchText.length) {
+        if (!searchText) setFilteredData([])
+        else if (searchText.length) {
             const searchFilteredData = friendsData.filter((friend) =>
                 friend.name.toLowerCase().includes(searchText)
             )
-            console.log('Search filter data:--', searchFilteredData)
             setFilteredData(searchFilteredData)
         }
-    }, [searchText])
+    }, [searchText, friendsData])
 
     React.useEffect(() => {
-        if(sortDataBy === sortBy.none){
-            if(filteredData.length) setFilteredData([])
-        }else if(sortDataBy === sortBy.name){
+        if (searchText) setSearchText('')
+
+        if (sortDataBy === sortBy.none) {
+            if (filteredData.length) setFilteredData([])
+        } else if (sortDataBy === sortBy.name) {
             const copyData = clone(friendsData)
 
             setFilteredData(copyData.sort(compareName))
-        } else if(sortDataBy === sortBy.favourite){
+        } else if (sortDataBy === sortBy.favourite) {
             const copyData = clone(friendsData)
 
             setFilteredData(copyData.sort(compareByFavourite))
         }
-    },[sortDataBy])
+    }, [sortDataBy, friendsData])
 
     const getDisplayData = () => {
-        if (filteredData.length) {
+        if (filteredData.length || !!searchText) {
+            if (!filteredData.length) return <p>No friends found</p>
+
             return (
                 <>
                     {filteredData.map((friend) => (
@@ -69,6 +74,9 @@ export const Main = ({ searchText }) => {
                 </>
             )
         }
+
+        if (!friendsData.length)
+            return <p style={{ color: '#ccc' }}>No friends added</p>
 
         return (
             <>
@@ -95,8 +103,6 @@ export const Main = ({ searchText }) => {
 
         if (!filteredArray.length) return
 
-        console.log('Executing action')
-
         switch (type) {
             case actionTypes.delete: {
                 const copyData = clone(friendsData)
@@ -105,6 +111,7 @@ export const Main = ({ searchText }) => {
                 )
 
                 setFriendsData(arrayAfterDeletion)
+                if (filteredData.length) setFilteredData(arrayAfterDeletion)
                 break
             }
 
@@ -118,6 +125,7 @@ export const Main = ({ searchText }) => {
                 })
 
                 setFriendsData(copyData)
+                if (filteredData.length) setFilteredData(copyData)
                 break
             }
         }
@@ -160,15 +168,26 @@ export const Main = ({ searchText }) => {
                     value={enteredName}
                 />
                 <Button type="submit">Add</Button>
-                <button type="button" onClick={() => setSoryDataBy(sortBy.name)}>Name</button>
-                <button type="button" onClick={() => setSoryDataBy(sortBy.favourite)}>Favourite</button>
-                <button type="button" onClick={() => setSoryDataBy(sortBy.none)}>Original</button>
+                {/* <button
+                    type="button"
+                    onClick={() => setSoryDataBy(sortBy.name)}
+                >
+                    Name
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setSoryDataBy(sortBy.favourite)}
+                >
+                    Favourite
+                </button>
+                <button
+                    type="button"
+                    onClick={() => setSoryDataBy(sortBy.none)}
+                >
+                    Original
+                </button> */}
             </Flexbox>
             <Line />
-
-            {!friendsData.length && (
-                <p style={{ color: '#ccc' }}>No friends added</p>
-            )}
 
             {getDisplayData()}
 
